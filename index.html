@@ -38,6 +38,7 @@ tr:first-child td:first-child{box-shadow:inset -4px 0 0 var(--gold)}
 .neg{color:var(--red)}.pos{color:var(--up)}
 .empty{color:var(--mute);text-align:center;padding:18px}
 ul{list-style:none;margin:0;padding:0}
+.sc{display:inline-flex;gap:6px;margin:0 6px;font-style:normal}.sc i{font-style:normal;color:var(--mute)}
 li.m{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
 </style>
 </head>
@@ -135,7 +136,7 @@ function render(){
     <td>${admin?`<button class="x" data-del="${r.t.id}" aria-label="حذف ${esc(r.t.name)}">✕</button>`:''}</td></tr>`).join('')
     :'<tr><td colspan="12" class="empty">لا توجد فرق بعد.</td></tr>';
   const name=id=>(S.teams.find(t=>t.id===id)||{name:'؟'}).name;
-  $('ml').innerHTML=S.matches.length?S.matches.slice().reverse().map(x=>`<li class="m"><span>${esc(name(x.h))} <b dir="ltr">${x.hs} - ${x.as}</b> ${esc(name(x.a))}</span>${admin?`<button class="x" data-m="${x.id}" aria-label="حذف المباراة">✕</button>`:''}</li>`).join('')
+  $('ml').innerHTML=S.matches.length?S.matches.slice().reverse().map(x=>`<li class="m"><span>${esc(name(x.h))} <span class="sc"><b>${x.hs}</b><i>-</i><b>${x.as}</b></span> ${esc(name(x.a))}</span>${admin?`<button class="x" data-m="${x.id}" aria-label="حذف المباراة">✕</button>`:''}</li>`).join('')
     :'<li class="empty">لا توجد مباريات بعد.</li>';
 }
 $('addT').onclick=()=>{
