@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>جدول دوري بيس </title>
+<title>لوحة التحكم</title>
+<meta name="robots" content="noindex,nofollow">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap">
 <style>
 :root{--bg:#000;--panel:#111;--line:#2b2b2b;--ink:#f3f1e7;--mute:#9a9a9a;--gold:#e8c65a;--red:#ff8a7a;--up:#5fd08a;
@@ -42,12 +43,29 @@ li.m{display:flex;justify-content:space-between;align-items:center;padding:6px 0
 </head>
 <body>
 <main>
-<h1>جدول الدوري</h1>
-<div style="height:14px"></div>
+<h1>لوحة تحكم الدوري</h1>
+<p class="sub">سجّل الدخول لإدارة الجدول.</p>
 
+<section class="panel adm" hidden>
+<h2>إضافة فريق</h2>
+<div class="row">
+<input type="text" id="tn" placeholder="اسم الفريق" maxlength="30">
+<button class="main" id="addT">إضافة فريق</button>
+</div>
+</section>
 
+<section class="panel adm" hidden>
+<h2>تسجيل مباراة</h2>
+<div class="row">
+<select id="h"></select>
+<div class="score"><input type="number" id="hs" min="0" value="0" aria-label="أهداف صاحب الأرض"><span>-</span><input type="number" id="as" min="0" value="0" aria-label="أهداف الضيف"></div>
+<select id="a"></select>
+<button class="main" id="addM">حفظ النتيجة</button>
+</div>
+<p id="err" class="neg" style="margin:8px 0 0"></p>
+</section>
 
-<section class="panel">
+<section class="panel adm" hidden>
 <h2>الترتيب</h2>
 <div class="wrap"><table>
 <thead><tr><th>#</th><th style="text-align:right">الفريق</th><th>لعب</th><th>فوز</th><th>تعادل</th><th>خسارة</th><th>له</th><th>عليه</th><th>فارق</th><th>خصم</th><th>نقاط</th><th></th></tr></thead>
@@ -55,21 +73,42 @@ li.m{display:flex;justify-content:space-between;align-items:center;padding:6px 0
 </table></div>
 </section>
 
-<section class="panel">
+<section class="panel adm" hidden>
 <h2>المباريات</h2>
 <ul id="ml"></ul>
 </section>
+<div class="panel adm" hidden>
+<h2>لوحة المشرف</h2>
+<div class="row"><button id="reset">مسح كل البيانات</button><button id="out">تسجيل الخروج</button></div>
+<p class="sub" style="margin:8px 0 0">أي تعديل يظهر للزوار فوراً.</p>
+</div>
+<div id="lg" style="text-align:center">
+<form id="lf" class="row" style="justify-content:center;margin-top:10px">
+<input type="text" id="em" placeholder="البريد الإلكتروني" dir="ltr" autocomplete="username">
+<input type="password" id="ps" placeholder="كلمة السر" dir="ltr" autocomplete="current-password" style="width:150px">
+<button class="main" type="submit">دخول</button>
+</form>
+<p id="lerr" class="neg"></p>
+</div>
 </main>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import{getFirestore,doc,onSnapshot}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getFirestore,doc,setDoc,onSnapshot}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyD008jyGkrA4cgjHr85zzJhO0njeF6RKJY",authDomain:"sex99-1f57c.firebaseapp.com",projectId:"sex99-1f57c",storageBucket:"sex99-1f57c.firebasestorage.app",messagingSenderId:"116641333183",appId:"1:116641333183:web:96c531d89b5f85a3796b0a"});
-const db=getFirestore(app),ref=doc(db,"league","main");
-const admin=false;let S={teams:[],matches:[]};
+const auth=getAuth(app),db=getFirestore(app),ref=doc(db,"league","main");
+let admin=false,S={teams:[],matches:[]};
 const $=id=>document.getElementById(id);
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const save=()=>setDoc(ref,{teams:S.teams,matches:S.matches}).catch(()=>alert('تعذّر الحفظ: ليس لديك صلاحية أو لا يوجد اتصال.'));
 onSnapshot(ref,d=>{if(d.exists()){S={teams:d.data().teams||[],matches:d.data().matches||[]}}render()},()=>{$('tb').innerHTML='<tr><td colspan="12" class="empty">تعذّر تحميل البيانات.</td></tr>'});
+const showLg=()=>{$('lg').hidden=admin};
+onAuthStateChanged(auth,u=>{admin=!!u;document.querySelectorAll('.adm').forEach(e=>e.hidden=!admin);showLg();render()});
+$('lf').onsubmit=async e=>{e.preventDefault();$('lerr').textContent='';
+  try{await signInWithEmailAndPassword(auth,$('em').value.trim(),$('ps').value);$('ps').value=''}
+  catch(x){$('lerr').textContent='البريد أو كلمة السر غير صحيحة.'}};
+$('out').onclick=()=>signOut(auth);
 function stats(){
   const m={};
   S.teams.forEach(t=>m[t.id]={t,p:0,w:0,d:0,l:0,gf:0,ga:0});
@@ -82,6 +121,11 @@ function stats(){
     .sort((a,b)=>b.pts-a.pts||b.gd-a.gd||b.gf-a.gf||a.t.name.localeCompare(b.t.name,'ar'));
 }
 function render(){
+  const opts=S.teams.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');
+  const hv=$('h').value,av=$('a').value;
+  $('h').innerHTML=opts;$('a').innerHTML=opts;
+  if(hv)$('h').value=hv;
+  if(av)$('a').value=av;else if(S.teams[1])$('a').value=S.teams[1].id;
   const rows=stats();
   $('tb').innerHTML=rows.length?rows.map((r,i)=>`<tr>
     <td>${i+1}</td><td class="name">${esc(r.t.name)}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td>
@@ -94,6 +138,30 @@ function render(){
   $('ml').innerHTML=S.matches.length?S.matches.slice().reverse().map(x=>`<li class="m"><span>${esc(name(x.h))} <b dir="ltr">${x.hs} - ${x.as}</b> ${esc(name(x.a))}</span>${admin?`<button class="x" data-m="${x.id}" aria-label="حذف المباراة">✕</button>`:''}</li>`).join('')
     :'<li class="empty">لا توجد مباريات بعد.</li>';
 }
+$('addT').onclick=()=>{
+  const n=$('tn').value.trim();if(!n)return;
+  if(S.teams.some(t=>t.name===n)){$('err').textContent='هذا الفريق موجود مسبقاً.';return}
+  $('err').textContent='';S.teams.push({id:uid(),name:n,ded:0});$('tn').value='';save();render();
+};
+$('tn').onkeydown=e=>{if(e.key==='Enter')$('addT').click()};
+$('addM').onclick=()=>{
+  const h=$('h').value,a=$('a').value;
+  if(S.teams.length<2){$('err').textContent='أضف فريقين على الأقل.';return}
+  if(h===a){$('err').textContent='اختر فريقين مختلفين.';return}
+  $('err').textContent='';
+  S.matches.push({id:uid(),h,a,hs:Math.max(0,+$('hs').value||0),as:Math.max(0,+$('as').value||0)});
+  $('hs').value=0;$('as').value=0;save();render();
+};
+$('tb').addEventListener('change',e=>{
+  const id=e.target.dataset.id;if(!id)return;
+  S.teams.find(t=>t.id===id).ded=Math.max(0,parseInt(e.target.value)||0);save();render();
+});
+document.addEventListener('click',e=>{
+  const d=e.target.dataset;
+  if(d.del&&confirm('حذف الفريق ومبارياته؟')){S.teams=S.teams.filter(t=>t.id!==d.del);S.matches=S.matches.filter(m=>m.h!==d.del&&m.a!==d.del);save();render()}
+  if(d.m){S.matches=S.matches.filter(m=>m.id!==d.m);save();render()}
+});
+$('reset').onclick=()=>{if(confirm('مسح كل الفرق والنتائج؟')){S={teams:[],matches:[]};save();render()}};
 render();
 </script>
 </body>
