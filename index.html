@@ -5,112 +5,391 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>لوحة التحكم</title>
 <meta name="robots" content="noindex,nofollow">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700&display=swap">
 <style>
-:root{--bg:#000;--panel:#111;--line:#2b2b2b;--ink:#f3f1e7;--mute:#9a9a9a;--gold:#e8c65a;--red:#ff8a7a;--up:#5fd08a;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-:root[data-theme="dark"]{--bg:#000;--panel:#111;--line:#2b2b2b;--ink:#f3f1e7;--mute:#9a9a9a;--gold:#e8c65a;--red:#ff8a7a;--up:#5fd08a}
+:root{
+  --bg:#050608;--panel:#0e1116;--panel2:#141a24;--line:#212836;
+  --ink:#eef1f6;--mute:#7d8698;--blue:#2f6bff;--win:#3aa76d;--loss:#d1554a;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)
+}
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:'Tajawal',Tahoma,sans-serif;line-height:1.6}
-main{max-width:860px;margin:0 auto;padding:20px 14px 40px}
-h1{font-size:2rem;font-weight:800;margin:0 0 4px}
-h2{font-size:1.1rem;margin:0 0 10px}
-.sub{color:var(--mute);margin:0 0 18px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Tajawal',Tahoma,sans-serif;line-height:1.55;min-height:100%}
+h1,h2,h3{font-family:'Cairo',Tahoma,sans-serif;margin:0}
+::selection{background:var(--blue);color:#fff}
+
+header.top{position:sticky;top:0;z-index:5;background:rgba(5,6,8,.92);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:calc(env(safe-area-inset-top,0px) + 12px) 16px 12px;
+  display:flex;align-items:center;justify-content:space-between}
+header.top h1{font-size:1.25rem;font-weight:800;letter-spacing:.2px}
+.pill{background:var(--panel2);border:1px solid var(--line);color:var(--blue);font-weight:700;
+  font-size:.8rem;padding:5px 12px;border-radius:99px}
+.pill.on{color:var(--win);border-color:var(--win)}
+
+main{max-width:640px;margin:0 auto;padding:16px 14px calc(84px + env(safe-area-inset-bottom,0px))}
+section.view{display:none}
+section.view.active{display:block;animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.card h2{font-size:1rem;color:var(--mute);font-weight:700;margin-bottom:10px}
+.empty{color:var(--mute);text-align:center;padding:22px 10px;font-size:.92rem}
+
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-input,select,button{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
-input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
-input[type=text]{flex:1;min-width:140px}
-input[type=number]{width:60px;text-align:center}
+input,select,button{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+input[type=text],input[type=password],input[type=email]{flex:1;min-width:130px}
+input[type=number]{width:58px;text-align:center}
 button{cursor:pointer;font-weight:700}
-button.main{background:var(--gold);color:#1a1a10;border-color:var(--gold)}
-button.x{padding:2px 8px;color:var(--red);border-color:transparent;background:transparent}
-.score{display:flex;align-items:center;gap:6px}
-.wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:640px;text-align:center}
-th,td{padding:9px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
-th{color:var(--mute);font-weight:400;font-size:.85rem}
+button.main{background:var(--blue);color:#fff;border-color:var(--blue)}
+button.x{padding:4px 9px;color:var(--loss);border-color:transparent;background:transparent}
+.neg{color:var(--loss);font-size:.88rem}
+
+/* hero / leader */
+.hero{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);
+  border-radius:16px;padding:20px;margin-bottom:14px}
+.hero .tag{color:var(--mute);font-size:.82rem;font-weight:700;margin-bottom:6px}
+.hero .team{font-family:'Cairo';font-size:1.7rem;font-weight:900;margin-bottom:10px}
+.hero .gapline{color:var(--mute);font-size:.85rem;margin:-6px 0 12px}
+.hero .gapline b{color:var(--ink)}
+.hero .row2{display:flex;gap:14px 18px;flex-wrap:wrap}
+.hero .stat b{display:block;font-family:'Cairo';font-size:1.4rem;font-weight:800;color:var(--blue)}
+.hero .stat span{color:var(--mute);font-size:.78rem}
+
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center}
+.tile b{display:block;font-family:'Cairo';font-size:1.3rem;font-weight:800}
+.tile span{color:var(--mute);font-size:.72rem}
+
+.mini-vs{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 2px}
+.mini-vs .t{font-weight:700;flex:1}
+.mini-vs .t.r{text-align:left}
+.mini-vs .sc{font-family:'Cairo';font-weight:800;color:var(--blue);font-size:1.05rem;min-width:52px;text-align:center}
+.mini-vs .sc.dash{color:var(--mute)}
+
+/* search */
+.search{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);
+  border-radius:10px;padding:8px 12px;margin-bottom:12px}
+.search svg{width:16px;height:16px;stroke:var(--mute);fill:none;stroke-width:2;flex-shrink:0}
+.search input{flex:1;background:none;border:none;color:var(--ink);font:inherit;padding:0;outline:none}
+.search input::placeholder{color:var(--mute)}
+
+/* standings table */
+.wrap{overflow-x:auto;margin:-4px}
+table{width:100%;border-collapse:collapse}
+th,td{padding:9px 3px;text-align:center;white-space:nowrap;font-size:.78rem}
+td.name{font-size:.85rem}
+th{color:var(--mute);font-weight:700;font-size:.74rem;border-bottom:1px solid var(--line)}
 td.name{text-align:right;font-weight:700}
-td.pts{font-weight:800;font-size:1.1rem;color:var(--gold)}
-tr:first-child td:first-child{box-shadow:inset -4px 0 0 var(--gold)}
-.ded input{width:52px;padding:3px}
-.neg{color:var(--red)}.pos{color:var(--up)}
-.empty{color:var(--mute);text-align:center;padding:18px}
-ul{list-style:none;margin:0;padding:0}
-.sc{display:inline-flex;gap:6px;margin:0 6px;font-style:normal}.sc i{font-style:normal;color:var(--mute)}
-li.m{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+tr td{border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:none}
+tr.hide,li.hide{display:none}
+td.pts{font-family:'Cairo';font-weight:800;font-size:1.05rem;color:var(--blue)}
+tr.r1 td.rk{color:var(--blue)}
+.gd.pos{color:var(--win)}.gd.neg{color:var(--loss)}
+.rk{color:var(--mute);font-weight:700}
+td.ded input{width:52px;padding:4px}
+
+/* fixtures / results cards */
+.rh{font-family:'Cairo';font-weight:800;color:var(--blue);font-size:.95rem;margin:18px 2px 8px}
+.rh:first-child{margin-top:2px}
+.fxcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.fxrow{display:flex;justify-content:space-between;align-items:center;padding:6px 2px}
+.fxrow+.fxrow{border-top:1px dashed var(--line)}
+.fxname{font-weight:700}
+.fxname.win{color:var(--win)}
+.fxscore{font-family:'Cairo';min-width:24px;text-align:center;font-weight:800;color:var(--mute)}
+.fxscore.played{color:var(--blue)}
+.fxctl{display:flex;gap:6px;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid var(--line);flex-wrap:wrap}
+.fxctl input{width:46px;padding:5px}
+
+/* rules */
+.rules p{color:var(--ink);margin:0 0 10px}
+.rules ol{margin:0;padding-inline-start:20px;display:flex;flex-direction:column;gap:8px}
+.rules li{color:var(--ink)}
+.rules li b{color:var(--blue)}
+.rules .note{color:var(--mute);font-size:.85rem;margin-top:10px}
+
+/* login */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:60vh}
+.login-card{width:100%;max-width:320px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;text-align:center}
+.login-card h2{color:var(--ink);font-size:1.2rem;margin-bottom:4px}
+.login-card .sub{color:var(--mute);font-size:.85rem;margin-bottom:16px}
+.login-card form{display:flex;flex-direction:column;gap:10px}
+.login-card input{width:100%}
+.login-card button.main{margin-top:4px}
+
+/* bottom nav */
+nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:5;background:rgba(5,6,8,.96);backdrop-filter:blur(10px);
+  border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom,0px)}
+nav.tabs button{flex:1;background:none;border:none;color:var(--mute);font-family:'Tajawal';font-size:.62rem;
+  font-weight:700;padding:9px 1px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border-radius:0}
+nav.tabs button svg{width:19px;height:19px;stroke:var(--mute);fill:none;stroke-width:1.8}
+nav.tabs button[aria-selected="true"]{color:var(--blue)}
+nav.tabs button[aria-selected="true"] svg{stroke:var(--blue)}
+nav.tabs button:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+
+#offlineBar{display:none;background:var(--loss);color:#fff;text-align:center;font-size:.8rem;
+  font-weight:700;padding:7px 10px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 53px);z-index:4}
+#offlineBar.show{display:block}
+#dedSave{display:none;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+#dedSave.show{display:flex}
+#dedSave .msg{color:var(--mute);font-size:.82rem}
 </style>
 </head>
 <body>
+<header class="top">
+<h1>لوحة التحكم</h1>
+<span class="pill" id="authPill">غير مسجّل</span>
+</header>
+<div id="offlineBar">غير متصل بالإنترنت</div>
+
 <main>
-<h1>لوحة تحكم الدوري</h1>
-<p class="sub">سجّل الدخول لإدارة الجدول.</p>
-
-<section class="panel adm" hidden>
-<h2>إضافة فريق</h2>
-<div class="row">
-<input type="text" id="tn" placeholder="اسم الفريق" maxlength="30">
-<button class="main" id="addT">إضافة فريق</button>
-</div>
+<section class="view" id="v-home">
+  <div class="hero" id="heroLeader"></div>
+  <div class="tiles" id="tiles"></div>
+  <div class="card" id="latestCard"></div>
+  <div class="card" id="nextCard"></div>
 </section>
 
-<section class="panel adm" hidden>
-<h2>تسجيل مباراة</h2>
-<div class="row">
-<select id="h"></select>
-<div class="score"><input type="number" id="hs" min="0" value="0" aria-label="أهداف صاحب الأرض"><span>-</span><input type="number" id="as" min="0" value="0" aria-label="أهداف الضيف"></div>
-<select id="a"></select>
-<button class="main" id="addM">حفظ النتيجة</button>
-</div>
-<p id="err" class="neg" style="margin:8px 0 0"></p>
+<section class="view" id="v-table">
+  <div class="card">
+    <h2>ترتيب الفرق</h2>
+    <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="text" id="teamSearch" placeholder="ابحث عن فريق..."></div>
+    <div class="wrap"><table>
+      <thead><tr><th>#</th><th style="text-align:right">الفريق</th><th>لعب</th><th>فوز</th><th>تعادل</th><th>خسارة</th><th>له</th><th>عليه</th><th>فارق</th><th>خصم</th><th>نقاط</th><th></th></tr></thead>
+      <tbody id="tb"></tbody>
+    </table></div>
+    <div id="dedSave">
+      <button class="main" id="saveDed">حفظ تعديلات الخصم</button>
+      <span class="msg" id="dedMsg">تعديلات غير محفوظة</span>
+    </div>
+  </div>
 </section>
 
-<section class="panel adm" hidden>
-<h2>الترتيب</h2>
-<div class="wrap"><table>
-<thead><tr><th>#</th><th style="text-align:right">الفريق</th><th>لعب</th><th>فوز</th><th>تعادل</th><th>خسارة</th><th>له</th><th>عليه</th><th>فارق</th><th>خصم</th><th>نقاط</th><th></th></tr></thead>
-<tbody id="tb"></tbody>
-</table></div>
+<section class="view" id="v-fixtures">
+  <div class="card">
+    <h2>جدول المباريات</h2>
+    <div class="row" style="margin-bottom:12px">
+      <select id="fxTeamFilter" style="flex:1"><option value="">كل الفرق</option></select>
+    </div>
+    <ul id="fxList" style="list-style:none;margin:0;padding:0"></ul>
+  </div>
 </section>
 
-<section class="panel adm" hidden>
-<h2>المباريات</h2>
-<ul id="ml"></ul>
+<section class="view" id="v-results">
+  <div class="card">
+    <h2>النتائج</h2>
+    <div class="row" style="margin-bottom:12px">
+      <select id="resTeamFilter" style="flex:1"><option value="">كل الفرق</option></select>
+    </div>
+    <ul id="resList" style="list-style:none;margin:0;padding:0"></ul>
+  </div>
 </section>
-<div class="panel adm" hidden>
-<h2>لوحة المشرف</h2>
-<div class="row"><button id="reset">مسح كل البيانات</button><button id="out">تسجيل الخروج</button></div>
-<p class="sub" style="margin:8px 0 0">أي تعديل يظهر للزوار فوراً.</p>
-</div>
-<div id="lg" style="text-align:center">
-<form id="lf" class="row" style="justify-content:center;margin-top:10px">
-<input type="text" id="em" placeholder="البريد الإلكتروني" dir="ltr" autocomplete="username">
-<input type="password" id="ps" placeholder="كلمة السر" dir="ltr" autocomplete="current-password" style="width:150px">
-<button class="main" type="submit">دخول</button>
-</form>
-<p id="lerr" class="neg"></p>
-</div>
+
+<section class="view" id="v-rules">
+  <div class="card rules">
+    <h2>نظام النقاط</h2>
+    <p>فوز = 3 نقاط، تعادل = نقطة واحدة، خسارة = 0.</p>
+  </div>
+  <div class="card rules">
+    <h2>المادة 1: مدة المباراة ونظام احتساب النقاط</h2>
+    <ol>
+      <li>تُقام المباراة بمدة زمنية قدرها <b>10 دقائق</b>.</li>
+      <li>لا تُحتسب أي مدة إضافية بعد انتهاء الوقت الأصلي للمباراة.</li>
+      <li>في حالة انتهاء المباراة بالتعادل، يحصل كل فريق على نقطة واحدة (1).</li>
+      <li>في حالة فوز أحد الفريقين، يحصل الفريق الفائز على النقاط المقررة للفوز، وفق نظام البطولة.</li>
+    </ol>
+  </div>
+  <div class="card rules">
+    <h2>المادة 2: رسوم المشاركة</h2>
+    <ol>
+      <li>يلتزم كل لاعب بدفع <b>1,000 دينار عراقي</b> رسومًا للمشاركة في البطولة.</li>
+      <li>تُدفع رسوم المشاركة قبل اعتماد تسجيل اللاعب في البطولة.</li>
+      <li>يُعد دفع الرسوم شرطًا أساسيًا لإتمام المشاركة في البطولة.</li>
+      <li>رسوم المشاركة غير قابلة للاسترداد بعد دفعها، سواء شارك اللاعب في المباريات أم انسحب لاحقًا من البطولة.</li>
+    </ol>
+  </div>
+  <div class="card rules">
+    <h2>المادة 3: توثيق المباريات والنتائج</h2>
+    <ol>
+      <li>يجب على كل لاعب تسجيل شاشة المباراة بالفيديو بشكل كامل، وذلك لضمان حقه في حال حدوث أي مشكلة أو اعتراض على نتيجة المباراة.</li>
+      <li>يجب الاحتفاظ بالتسجيل إلى حين اعتماد نتيجة المباراة وعدم وجود أي اعتراضات أو نزاعات بشأنها.</li>
+      <li>يلتزم اللاعبون بتوثيق نتيجة المباراة فور انتهائها.</li>
+      <li>يجب إرسال صورة النتيجة إلى مجموعة البطولة أو إلى المنظم بشكل خاص.</li>
+      <li>تُعد صورة النتيجة والتسجيل المرئي للمباراة من وسائل إثبات نتيجة المباراة عند الحاجة.</li>
+    </ol>
+  </div>
+  <div class="card rules">
+    <h2>المادة 4: انقطاع الاتصال بالإنترنت</h2>
+    <ol>
+      <li>في حال انقطاع الاتصال بالإنترنت أثناء المباراة، يجب على اللاعب تقديم تسجيل الشاشة الكامل لإثبات مجريات المباراة وحفظ حقوقه.</li>
+      <li>في حال كان اللاعب فائزًا أو متقدمًا وقت انقطاع الاتصال، يجب عليه تقديم التسجيل لإثبات حالة المباراة.</li>
+      <li>في حال عدم وجود تسجيل فيديو يثبت مجريات المباراة عند حدوث الانقطاع، يفقد اللاعب حقه في المطالبة باعتماد النتيجة أو إعادة المباراة، ويُحتسب خاسرًا وفقًا لقرار المنظم.</li>
+      <li>في حال تقديم التسجيل المطلوب، تتم مراجعة الحالة من قبل المنظم، ويُتخذ القرار المناسب، بما في ذلك إعادة المباراة عند استحقاق ذلك.</li>
+    </ol>
+  </div>
+  <div class="card rules">
+    <h2>المادة 5: الالتزام بموعد المباريات</h2>
+    <ol>
+      <li>يجب على كل لاعب خوض الجولة المقررة له خلال مدة أقصاها <b>24 ساعة</b> من وقت تحديد الجولة.</li>
+      <li>في حال عدم خوض المباراة خلال المدة المحددة دون عذر مقبول، يحق للمنظم احتساب اللاعب خاسرًا.</li>
+      <li>يُستثنى من ذلك الحالات التي يتم فيها اعتماد التأجيل من قبل المنظم وفقًا للمادة (6).</li>
+    </ol>
+  </div>
+  <div class="card rules">
+    <h2>المادة 6: تأجيل المباريات</h2>
+    <ol>
+      <li>يجوز تأجيل المباراة في حال وجود ظرف طارئ أو سبب يستدعي التأجيل.</li>
+      <li>يجب على اللاعب إبلاغ منظم البطولة حيدر محمد بالظرف وطلب التأجيل.</li>
+      <li>لا يُعتبر التأجيل رسميًا إلا بعد موافقة المنظم عليه.</li>
+      <li>يُمنع تأجيل المباراة من طرف واحد دون إبلاغ المنظم أو الحصول على موافقته.</li>
+    </ol>
+  </div>
+  <div class="card rules">
+    <h2>المادة 7: الانسحاب من المباراة</h2>
+    <ol>
+      <li>في حال انسحاب أحد اللاعبين من المباراة دون سبب مقبول، تُفرض عليه عقوبة <b>خصم 3 نقاط</b> من رصيده في البطولة.</li>
+      <li>يحق للمنظم اتخاذ القرار المناسب بشأن نتيجة المباراة وفقًا لظروف الانسحاب.</li>
+    </ol>
+  </div>
+  <div class="card rules">
+    <h2>المادة 8: الانسحاب من البطولة</h2>
+    <ol>
+      <li>في حال انسحاب اللاعب من البطولة بالكامل دون سبب مقبول، تُفرض عليه غرامة مالية قدرها <b>5,000 دينار عراقي</b>.</li>
+      <li>يُستثنى من الغرامة من يثبت وجود سبب مقبول للانسحاب، وذلك وفقًا لتقدير المنظم.</li>
+      <li>يكون قرار اعتماد سبب الانسحاب من اختصاص منظم البطولة.</li>
+    </ol>
+  </div>
+  <div class="card rules">
+    <h2>المادة 9: إدارة وتنظيم البطولة</h2>
+    <ol>
+      <li>منظم البطولة: <b>حيدر محمد</b>.</li>
+      <li>مساعد المنظم: <b>علي سعد</b>.</li>
+      <li>يتولى المنظم ومساعده متابعة سير البطولة وتنظيم المباريات وتطبيق أحكام هذه اللائحة.</li>
+      <li>تُعد قرارات الجهة المنظمة المرجع التنظيمي في الحالات التي لم يرد بشأنها نص صريح في هذه اللائحة.</li>
+    </ol>
+  </div>
+  <div class="card rules">
+    <h2>المادة 10: أحكام عامة</h2>
+    <ol>
+      <li>يُعد تسجيل اللاعب في البطولة ودفع رسوم المشاركة موافقةً منه على الالتزام بجميع القوانين والأنظمة الواردة في هذه اللائحة.</li>
+      <li>يتحمل كل لاعب مسؤولية الالتزام بالمواعيد والتعليمات والقرارات التنظيمية المعتمدة.</li>
+      <li>يُعد تسجيل الشاشة بالفيديو أثناء المباراة إلزاميًا لضمان حقوق جميع اللاعبين عند حدوث أي خلاف أو مشكلة.</li>
+    </ol>
+  </div>
+</section>
+
+<section class="view" id="v-admin">
+  <div id="loginBox" class="login-wrap">
+    <div class="login-card">
+      <h2>دخول المشرف</h2>
+      <p class="sub">سجّل الدخول لإدارة الدوري</p>
+      <form id="lf">
+        <input type="email" id="em" placeholder="البريد الإلكتروني" dir="ltr" autocomplete="username">
+        <input type="password" id="ps" placeholder="كلمة السر" dir="ltr" autocomplete="current-password">
+        <button class="main" type="submit">دخول</button>
+      </form>
+      <p id="lerr" class="neg" style="margin-top:10px"></p>
+    </div>
+  </div>
+
+  <div id="adminBox" hidden>
+    <div class="card">
+      <h2>إضافة فريق</h2>
+      <div class="row"><input type="text" id="tn" placeholder="اسم الفريق" maxlength="30"><button class="main" id="addT">إضافة</button></div>
+      <p id="err" class="neg" style="margin-top:8px"></p>
+    </div>
+
+    <div class="card">
+      <h2>إضافة جولة إلى الجدول</h2>
+      <div class="row" style="margin-bottom:8px"><span>رقم الجولة</span><input type="number" id="fr" min="1" value="1" style="width:70px"></div>
+      <div id="frows"></div>
+      <div class="row">
+        <button id="moreF">+ مباراة أخرى</button>
+        <button class="main" id="addF">حفظ الجولة</button>
+        <button id="genF">توليد كل الجولات تلقائياً</button>
+      </div>
+      <p id="ferr" class="neg" style="margin-top:8px"></p>
+    </div>
+
+    <div class="card">
+      <h2>تسجيل مباراة مباشرة (بدون جولة)</h2>
+      <div class="row">
+        <select id="h"></select>
+        <div class="row" style="gap:4px"><input type="number" id="hs" min="0" value="0"><span>-</span><input type="number" id="as" min="0" value="0"></div>
+        <select id="a"></select>
+        <button class="main" id="addM">حفظ النتيجة</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row"><button id="reset">مسح كل البيانات</button><button id="out">تسجيل الخروج</button></div>
+      <p class="sub" style="margin-top:8px;color:var(--mute);font-size:.85rem">أي تعديل يظهر للزوار فوراً.</p>
+    </div>
+  </div>
+</section>
 </main>
+
+<nav class="tabs" role="tablist">
+<button data-tab="home" role="tab" aria-selected="true"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10.8 12 3.5l8.5 7.3"/><path d="M5.5 9.3V20a1 1 0 0 0 1 1H10v-5.5a2 2 0 0 1 4 0V21h3.5a1 1 0 0 0 1-1V9.3"/></svg>الرئيسية</button>
+<button data-tab="table" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-9.5h4V21"/><path d="M10 21V6.5h4V21"/><path d="M16 21v-6.5h4V21"/><path d="M3 21h18"/></svg>الجدول</button>
+<button data-tab="fixtures" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2.2"/><path d="M3.5 9.7h17M8 3v4M16 3v4"/><circle cx="8.3" cy="14" r=".9" fill="currentColor" stroke="none"/><circle cx="12" cy="14" r=".9" fill="currentColor" stroke="none"/><circle cx="15.7" cy="14" r=".9" fill="currentColor" stroke="none"/><circle cx="8.3" cy="17.3" r=".9" fill="currentColor" stroke="none"/><circle cx="12" cy="17.3" r=".9" fill="currentColor" stroke="none"/></svg>المباريات</button>
+<button data-tab="results" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v3.2a5 5 0 0 1-10 0V4Z"/><path d="M7 5.2H4.3A2.8 2.8 0 0 0 7 8.7"/><path d="M17 5.2h2.7A2.8 2.8 0 0 1 17 8.7"/><path d="M12 12.2V15"/><path d="M9 20h6"/><path d="M10.2 16.6h3.6l.5 3.4h-4.6l.5-3.4Z"/></svg>النتائج</button>
+<button data-tab="rules" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.2c-1.7-1.1-4.3-1.5-6.3-1v13.3c2 0 4.6.4 6.3 1.5 1.7-1.1 4.3-1.5 6.3-1.5V5.2c-2-.5-4.6-.1-6.3 1Z"/><path d="M12 6.2V19.5"/></svg>القوانين</button>
+<button data-tab="admin" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.3 18.5 6v5.2c0 4.7-3 8-6.5 9.5-3.5-1.5-6.5-4.8-6.5-9.5V6L12 3.3Z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg><span id="navAdminLabel">دخول</span></button>
+</nav>
+
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import{getFirestore,doc,setDoc,onSnapshot}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyD008jyGkrA4cgjHr85zzJhO0njeF6RKJY",authDomain:"sex99-1f57c.firebaseapp.com",projectId:"sex99-1f57c",storageBucket:"sex99-1f57c.firebasestorage.app",messagingSenderId:"116641333183",appId:"1:116641333183:web:96c531d89b5f85a3796b0a"});
 const auth=getAuth(app),db=getFirestore(app),ref=doc(db,"league","main");
-let admin=false,S={teams:[],matches:[]};
+let admin=false,S={teams:[],matches:[],fixtures:[]},dedDirty=false;
 const $=id=>document.getElementById(id);
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-const save=()=>setDoc(ref,{teams:S.teams,matches:S.matches}).catch(()=>alert('تعذّر الحفظ: ليس لديك صلاحية أو لا يوجد اتصال.'));
-onSnapshot(ref,d=>{if(d.exists()){S={teams:d.data().teams||[],matches:d.data().matches||[]}}render()},()=>{$('tb').innerHTML='<tr><td colspan="12" class="empty">تعذّر تحميل البيانات.</td></tr>'});
-const showLg=()=>{$('lg').hidden=admin};
-onAuthStateChanged(auth,u=>{admin=!!u;document.querySelectorAll('.adm').forEach(e=>e.hidden=!admin);showLg();render()});
+const save=()=>setDoc(ref,{teams:S.teams,matches:S.matches,fixtures:S.fixtures})
+  .then(()=>{dedDirty=false;$('dedSave').classList.remove('show')})
+  .catch(()=>alert('تعذّر الحفظ: ليس لديك صلاحية أو لا يوجد اتصال.'));
+
+function setOffline(v,msg){const b=$('offlineBar');if(msg)b.textContent=msg;b.classList.toggle('show',v)}
+window.addEventListener('offline',()=>setOffline(true,'غير متصل بالإنترنت'));
+window.addEventListener('online',()=>setOffline(false));
+if(!navigator.onLine)setOffline(true,'غير متصل بالإنترنت');
+
+onSnapshot(ref,d=>{
+  setOffline(false);
+  if(d.exists()){
+    if(dedDirty){ // keep local unsaved deduction edits, merge everything else fresh
+      const localDed={};S.teams.forEach(t=>localDed[t.id]=t.ded);
+      S={teams:(d.data().teams||[]).map(t=>localDed[t.id]!==undefined?{...t,ded:localDed[t.id]}:t),matches:d.data().matches||[],fixtures:d.data().fixtures||[]};
+    }else{
+      S={teams:d.data().teams||[],matches:d.data().matches||[],fixtures:d.data().fixtures||[]};
+    }
+  }
+  render();
+},()=>{setOffline(true,'تعذّر الاتصال بالخادم');$('tb').innerHTML='<tr><td colspan="12" class="empty">تعذّر تحميل البيانات.</td></tr>'});
+
+onAuthStateChanged(auth,u=>{
+  admin=!!u;
+  $('loginBox').hidden=admin;$('adminBox').hidden=!admin;
+  $('authPill').textContent=admin?'مسجّل دخول':'غير مسجّل';
+  $('authPill').classList.toggle('on',admin);
+  $('navAdminLabel').textContent=admin?'الإدارة':'دخول';
+  render();
+});
 $('lf').onsubmit=async e=>{e.preventDefault();$('lerr').textContent='';
   try{await signInWithEmailAndPassword(auth,$('em').value.trim(),$('ps').value);$('ps').value=''}
   catch(x){$('lerr').textContent='البريد أو كلمة السر غير صحيحة.'}};
 $('out').onclick=()=>signOut(auth);
-function stats(){
+
+const name=id=>(S.teams.find(t=>t.id===id)||{name:'؟'}).name;
+
+function baseRows(){
   const m={};
   S.teams.forEach(t=>m[t.id]={t,p:0,w:0,d:0,l:0,gf:0,ga:0});
   S.matches.forEach(x=>{
@@ -118,27 +397,162 @@ function stats(){
     H.p++;A.p++;H.gf+=x.hs;H.ga+=x.as;A.gf+=x.as;A.ga+=x.hs;
     if(x.hs>x.as){H.w++;A.l++}else if(x.hs<x.as){A.w++;H.l++}else{H.d++;A.d++}
   });
-  return Object.values(m).map(r=>({...r,gd:r.gf-r.ga,pts:r.w*3+r.d-(r.t.ded||0)}))
-    .sort((a,b)=>b.pts-a.pts||b.gd-a.gd||b.gf-a.gf||a.t.name.localeCompare(b.t.name,'ar'));
+  return Object.values(m).map(r=>({...r,gd:r.gf-r.ga,pts:r.w*3+r.d-(r.t.ded||0)}));
 }
+function h2hSort(group){
+  const ids=new Set(group.map(r=>r.t.id));
+  const h={};group.forEach(r=>h[r.t.id]={pts:0,gf:0,ga:0});
+  S.matches.forEach(m=>{
+    if(!ids.has(m.h)||!ids.has(m.a))return;
+    h[m.h].gf+=m.hs;h[m.h].ga+=m.as;h[m.a].gf+=m.as;h[m.a].ga+=m.hs;
+    if(m.hs>m.as)h[m.h].pts+=3;else if(m.hs<m.as)h[m.a].pts+=3;else{h[m.h].pts+=1;h[m.a].pts+=1}
+  });
+  return group.slice().sort((a,b)=>{
+    const A=h[a.t.id],B=h[b.t.id],agd=A.gf-A.ga,bgd=B.gf-B.ga;
+    return B.pts-A.pts||bgd-agd||B.gf-A.gf||b.gd-a.gd||b.gf-a.gf||a.t.name.localeCompare(b.t.name,'ar');
+  });
+}
+function stats(){
+  const rows=baseRows().sort((a,b)=>b.pts-a.pts);
+  const out=[];
+  let i=0;
+  while(i<rows.length){
+    let j=i+1;
+    while(j<rows.length&&rows[j].pts===rows[i].pts)j++;
+    const group=rows.slice(i,j);
+    out.push(...(group.length>1?h2hSort(group):group));
+    i=j;
+  }
+  return out;
+}
+function medal(c1,c2){
+  return `<svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:-4px;margin-inline-end:3px" aria-hidden="true">
+    <path d="M8.3 2.5 4.5 9l3.6 2.3 2.4-5.3-2.2-3.5Z" fill="${c1}" opacity=".55"/>
+    <path d="M15.7 2.5 19.5 9l-3.6 2.3-2.4-5.3 2.2-3.5Z" fill="${c1}" opacity=".55"/>
+    <circle cx="12" cy="14.5" r="6.7" fill="${c1}" stroke="${c2}" stroke-width="1"/>
+    <circle cx="12" cy="14.5" r="4.6" fill="none" stroke="${c2}" stroke-width=".8" opacity=".6"/>
+    <path d="M9.4 14.6 11.2 16.4 14.8 12.6" stroke="#20210f" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+const MEDALS=[medal('#f2c14e','#c8912a'),medal('#cfd4da','#9aa1aa')];
+function roundsMap(){
+  const rounds=new Map();
+  S.fixtures.forEach(f=>{if(!rounds.has(f.round))rounds.set(f.round,[]);rounds.get(f.round).push({...f,played:false})});
+  S.matches.forEach(m=>{const r=m.round||0;if(!rounds.has(r))rounds.set(r,[]);rounds.get(r).push({...m,played:true})});
+  return rounds;
+}
+function fxCard(x){
+  const hs=x.played?x.hs:'-',as=x.played?x.as:'-';
+  const ctl=!admin?'':x.played
+    ?`<div class="fxctl"><button class="x" data-m="${x.id}">✕ حذف النتيجة</button></div>`
+    :`<div class="fxctl"><input type="number" min="0" value="0" id="r1_${x.id}" aria-label="أهداف ${esc(name(x.h))}"><span>-</span><input type="number" min="0" value="0" id="r2_${x.id}" aria-label="أهداف ${esc(name(x.a))}"><button data-fs="${x.id}">تسجيل النتيجة</button><button class="x" data-fd="${x.id}">✕ حذف</button></div>`;
+  return `<li class="fxcard" data-h="${x.h}" data-a="${x.a}">
+    <div class="fxrow"><span class="fxname${x.played&&x.hs>x.as?' win':''}">${esc(name(x.h))}</span><span class="fxscore${x.played?' played':''}">${hs}</span></div>
+    <div class="fxrow"><span class="fxname${x.played&&x.as>x.hs?' win':''}">${esc(name(x.a))}</span><span class="fxscore${x.played?' played':''}">${as}</span></div>
+    ${ctl}
+  </li>`;
+}
+
 function render(){
   const opts=S.teams.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');
   const hv=$('h').value,av=$('a').value;
   $('h').innerHTML=opts;$('a').innerHTML=opts;
   if(hv)$('h').value=hv;
   if(av)$('a').value=av;else if(S.teams[1])$('a').value=S.teams[1].id;
+  drawRows();
+
   const rows=stats();
-  $('tb').innerHTML=rows.length?rows.map((r,i)=>`<tr>
-    <td>${i+1}</td><td class="name">${esc(r.t.name)}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td>
-    <td>${r.gf}</td><td>${r.ga}</td><td class="${r.gd>0?'pos':r.gd<0?'neg':''}" dir="ltr">${r.gd>0?'+':''}${r.gd}</td>
+  $('tb').innerHTML=rows.length?rows.map((r,i)=>`<tr class="${i===0?'r1':''}" data-name="${esc(r.t.name)}">
+    <td class="rk">${MEDALS[i]||''}${i+1}</td><td class="name">${esc(r.t.name)}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td>
+    <td>${r.gf}</td><td>${r.ga}</td><td class="gd ${r.gd>0?'pos':r.gd<0?'neg':''}" dir="ltr">${r.gd>0?'+':''}${r.gd}</td>
     <td class="ded">${admin?`<input type="number" min="0" value="${r.t.ded||0}" data-id="${r.t.id}" aria-label="خصم نقاط ${esc(r.t.name)}">`:(r.t.ded?'-'+r.t.ded:'0')}</td>
     <td class="pts">${r.pts}</td>
     <td>${admin?`<button class="x" data-del="${r.t.id}" aria-label="حذف ${esc(r.t.name)}">✕</button>`:''}</td></tr>`).join('')
     :'<tr><td colspan="12" class="empty">لا توجد فرق بعد.</td></tr>';
-  const name=id=>(S.teams.find(t=>t.id===id)||{name:'؟'}).name;
-  $('ml').innerHTML=S.matches.length?S.matches.slice().reverse().map(x=>`<li class="m"><span>${esc(name(x.h))} <span class="sc"><b>${x.hs}</b><i>-</i><b>${x.as}</b></span> ${esc(name(x.a))}</span>${admin?`<button class="x" data-m="${x.id}" aria-label="حذف المباراة">✕</button>`:''}</li>`).join('')
-    :'<li class="empty">لا توجد مباريات بعد.</li>';
+
+  const rounds=roundsMap();
+  const keys=[...rounds.keys()].sort((a,b)=>a-b);
+  $('fxList').innerHTML=keys.length?keys.map(r=>{
+    const label=r?`الجولة ${r}`:'مباريات بدون جولة';
+    return `<li class="rh">${label}</li>`+rounds.get(r).map(fxCard).join('');
+  }).join(''):'<li class="empty">لا توجد مباريات بعد.</li>';
+
+  const played=keys.filter(r=>rounds.get(r).some(x=>x.played));
+  $('resList').innerHTML=played.length?played.slice().reverse().map(r=>{
+    const label=r?`الجولة ${r}`:'مباريات بدون جولة';
+    const items=rounds.get(r).filter(x=>x.played);
+    return `<li class="rh">${label}</li>`+items.map(fxCard).join('');
+  }).join(''):'<li class="empty">لا توجد نتائج بعد.</li>';
+
+  const curRound=S.fixtures.length?Math.min(...S.fixtures.map(f=>f.round)):(S.matches.length?Math.max(...S.matches.map(m=>m.round||0)):0);
+  const leader=rows[0],second=rows[1];
+  const gap=second?leader.pts-second.pts:null;
+  $('heroLeader').innerHTML=leader?`
+    <div class="tag">المتصدر الحالي</div>
+    <div class="team">${esc(leader.t.name)}</div>
+    ${second?`<div class="gapline">+${gap} نقطة عن <b>${esc(second.t.name)}</b> (المركز الثاني)</div>`:''}
+    <div class="row2">
+      <div class="stat"><b>${leader.pts}</b><span>نقطة</span></div>
+      <div class="stat"><b>${leader.p}</b><span>لعب</span></div>
+      <div class="stat"><b>${leader.w}</b><span>فوز</span></div>
+      ${second?`<div class="stat"><b>${gap}</b><span>فارق عن الثاني</span></div>`:''}
+    </div>`:`<div class="tag">المتصدر الحالي</div><div class="empty" style="padding:6px 0 0">لا توجد بيانات كافية بعد.</div>`;
+
+  $('tiles').innerHTML=`
+    <div class="tile"><b>${S.teams.length}</b><span>فريق</span></div>
+    <div class="tile"><b>${S.matches.length}</b><span>مباراة لُعبت</span></div>
+    <div class="tile"><b>${curRound||'-'}</b><span>الجولة الحالية</span></div>`;
+
+  const last=S.matches[S.matches.length-1];
+  $('latestCard').innerHTML=last?`<h2>أحدث نتيجة</h2>
+    <div class="mini-vs"><span class="t">${esc(name(last.h))}</span><span class="sc">${last.hs} - ${last.as}</span><span class="t r">${esc(name(last.a))}</span></div>`
+    :`<h2>أحدث نتيجة</h2><div class="empty">لا توجد نتائج بعد.</div>`;
+
+  const nextRound=keys.find(r=>rounds.get(r).some(x=>!x.played));
+  const upcoming=nextRound!==undefined?rounds.get(nextRound).filter(x=>!x.played):[];
+  $('nextCard').innerHTML=`<h2>${nextRound?`مباريات الجولة ${nextRound}`:'المباريات القادمة'}</h2>`+
+    (upcoming.length?upcoming.slice(0,4).map(x=>`<div class="mini-vs"><span class="t">${esc(name(x.h))}</span><span class="sc dash">-</span><span class="t r">${esc(name(x.a))}</span></div>`).join('')
+      :'<div class="empty">لا توجد مباريات مجدولة.</div>');
+
+  filterTeams();
+  fillTeamFilters();
+  applyMatchFilter('fxTeamFilter','#fxList');
+  applyMatchFilter('resTeamFilter','#resList');
 }
+function filterTeams(){
+  const q=$('teamSearch').value.trim();
+  document.querySelectorAll('#tb tr[data-name]').forEach(tr=>{
+    tr.classList.toggle('hide',q&&!tr.dataset.name.includes(q));
+  });
+}
+$('teamSearch').oninput=filterTeams;
+
+function fillTeamFilters(){
+  const opts='<option value="">كل الفرق</option>'+S.teams.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');
+  ['fxTeamFilter','resTeamFilter'].forEach(id=>{
+    const el=$(id),v=el.value;
+    el.innerHTML=opts;
+    if([...el.options].some(o=>o.value===v))el.value=v;
+  });
+}
+function applyMatchFilter(selectId,listSel){
+  const tid=$(selectId).value;
+  const list=document.querySelector(listSel);
+  let anyInRound=false;
+  [...list.children].reverse().forEach(li=>{
+    if(li.classList.contains('fxcard')){
+      const show=!tid||li.dataset.h===tid||li.dataset.a===tid;
+      li.classList.toggle('hide',!show);
+      if(show)anyInRound=true;
+    }else if(li.classList.contains('rh')){
+      li.classList.toggle('hide',!anyInRound);
+      anyInRound=false;
+    }
+  });
+}
+$('fxTeamFilter').onchange=()=>applyMatchFilter('fxTeamFilter','#fxList');
+$('resTeamFilter').onchange=()=>applyMatchFilter('resTeamFilter','#resList');
+
 $('addT').onclick=()=>{
   const n=$('tn').value.trim();if(!n)return;
   if(S.teams.some(t=>t.name===n)){$('err').textContent='هذا الفريق موجود مسبقاً.';return}
@@ -147,22 +561,77 @@ $('addT').onclick=()=>{
 $('tn').onkeydown=e=>{if(e.key==='Enter')$('addT').click()};
 $('addM').onclick=()=>{
   const h=$('h').value,a=$('a').value;
-  if(S.teams.length<2){$('err').textContent='أضف فريقين على الأقل.';return}
-  if(h===a){$('err').textContent='اختر فريقين مختلفين.';return}
-  $('err').textContent='';
+  if(S.teams.length<2){alert('أضف فريقين على الأقل.');return}
+  if(h===a){alert('اختر فريقين مختلفين.');return}
   S.matches.push({id:uid(),h,a,hs:Math.max(0,+$('hs').value||0),as:Math.max(0,+$('as').value||0)});
   $('hs').value=0;$('as').value=0;save();render();
 };
-$('tb').addEventListener('change',e=>{
+$('tb').addEventListener('input',e=>{
   const id=e.target.dataset.id;if(!id)return;
-  S.teams.find(t=>t.id===id).ded=Math.max(0,parseInt(e.target.value)||0);save();render();
+  S.teams.find(t=>t.id===id).ded=Math.max(0,parseInt(e.target.value)||0);
+  dedDirty=true;$('dedSave').classList.add('show');
 });
+$('saveDed').onclick=()=>save();
 document.addEventListener('click',e=>{
   const d=e.target.dataset;
-  if(d.del&&confirm('حذف الفريق ومبارياته؟')){S.teams=S.teams.filter(t=>t.id!==d.del);S.matches=S.matches.filter(m=>m.h!==d.del&&m.a!==d.del);save();render()}
+  if(d.del&&confirm('حذف الفريق ومبارياته؟')){S.teams=S.teams.filter(t=>t.id!==d.del);S.matches=S.matches.filter(m=>m.h!==d.del&&m.a!==d.del);S.fixtures=S.fixtures.filter(m=>m.h!==d.del&&m.a!==d.del);save();render()}
   if(d.m){S.matches=S.matches.filter(m=>m.id!==d.m);save();render()}
 });
-$('reset').onclick=()=>{if(confirm('مسح كل الفرق والنتائج؟')){S={teams:[],matches:[]};save();render()}};
+$('reset').onclick=()=>{if(confirm('مسح كل الفرق والنتائج؟')){S={teams:[],matches:[],fixtures:[]};save();render()}};
+
+let FR=[{h:'',a:''}];
+function drawRows(){
+  const ok=id=>S.teams.some(t=>t.id===id);
+  FR.forEach(r=>{if(!ok(r.h))r.h=S.teams[0]?.id||'';if(!ok(r.a))r.a=S.teams[1]?.id||''});
+  const opt=v=>S.teams.map(t=>`<option value="${t.id}"${t.id===v?' selected':''}>${esc(t.name)}</option>`).join('');
+  $('frows').innerHTML=FR.map((r,i)=>`<div class="row" style="margin-bottom:6px"><select data-fi="${i}" data-side="h">${opt(r.h)}</select><span>ضد</span><select data-fi="${i}" data-side="a">${opt(r.a)}</select>${FR.length>1?`<button class="x" data-frd="${i}">✕</button>`:''}</div>`).join('');
+}
+$('frows').addEventListener('change',e=>{const d=e.target.dataset;if(d.fi!==undefined)FR[+d.fi][d.side]=e.target.value});
+$('moreF').onclick=()=>{FR.push({h:'',a:''});drawRows()};
+$('addF').onclick=()=>{
+  const r=Math.max(1,parseInt($('fr').value)||1);
+  if(S.teams.length<2){$('ferr').textContent='أضف فريقين على الأقل.';return}
+  if(FR.some(x=>x.h===x.a)){$('ferr').textContent='في إحدى المباريات فريقان متطابقان.';return}
+  $('ferr').textContent='';
+  FR.forEach(x=>S.fixtures.push({id:uid(),round:r,h:x.h,a:x.a}));
+  FR=[{h:'',a:''}];$('fr').value=r+1;save();render();
+};
+$('genF').onclick=()=>{
+  if(S.teams.length<2){$('ferr').textContent='أضف فريقين على الأقل.';return}
+  const start=S.fixtures.reduce((m,f)=>Math.max(m,f.round),0)+1;
+  if(!confirm('سيتم توليد جدول كامل (كل فريق يواجه الآخرين مرة) ابتداءً من الجولة '+start+'. متابعة؟'))return;
+  const ids=S.teams.map(t=>t.id);if(ids.length%2)ids.push(null);
+  const n=ids.length;
+  for(let r=0;r<n-1;r++){
+    for(let i=0;i<n/2;i++){
+      let h=ids[i],a=ids[n-1-i];
+      if(!h||!a)continue;
+      if((i===0&&r%2)||(i>0&&(r+i)%2))[h,a]=[a,h];
+      S.fixtures.push({id:uid(),round:start+r,h,a});
+    }
+    ids.splice(1,0,ids.pop());
+  }
+  $('ferr').textContent='';$('fr').value=start+n-1;save();render();
+};
+document.addEventListener('click',e=>{
+  const d=e.target.dataset;
+  if(d.frd!==undefined){FR.splice(+d.frd,1);drawRows()}
+  if(d.fd){S.fixtures=S.fixtures.filter(f=>f.id!==d.fd);save();render()}
+  if(d.fs){
+    const f=S.fixtures.find(x=>x.id===d.fs);if(!f)return;
+    S.matches.push({id:uid(),round:f.round,h:f.h,a:f.a,hs:Math.max(0,+$('r1_'+f.id).value||0),as:Math.max(0,+$('r2_'+f.id).value||0)});
+    S.fixtures=S.fixtures.filter(x=>x.id!==f.id);save();render();
+  }
+});
+
+const tabs=document.querySelectorAll('nav.tabs button');
+function go(t){
+  tabs.forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));
+  document.querySelectorAll('section.view').forEach(s=>s.classList.toggle('active',s.id==='v-'+t));
+  window.scrollTo(0,0);
+}
+tabs.forEach(b=>b.onclick=()=>go(b.dataset.tab));
+go('home');
 render();
 </script>
 </body>
